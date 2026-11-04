@@ -1,0 +1,60 @@
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      # Cada rota: id, destino (uri) e condicao (predicates). O caminho e repassado sem alteracao.
+      routes:
+        - id: customer-service
+          uri: ${CUSTOMER_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/customers/**
+        - id: product-service
+          uri: ${PRODUCT_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/products/**,/api/categories/**
+        - id: inventory-service
+          uri: ${INVENTORY_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/inventory/**
+        - id: order-service
+          uri: ${ORDER_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/orders/**
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 10s
+
+gateway:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      issuer: ${JWT_ISSUER:ecommerce-api-gateway}
+      expiration: ${JWT_EXPIRATION:60m}
+    # Senhas vem do ambiente (.env). Nunca versione senhas reais.
+    users:
+      - username: ${GATEWAY_ADMIN_USERNAME:admin}
+        password: ${GATEWAY_ADMIN_PASSWORD}
+        roles: [ADMIN, USER]
+      - username: ${GATEWAY_USER_USERNAME:user}
+        password: ${GATEWAY_USER_PASSWORD}
+        roles: [USER]
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+logging:
+  level:
+    com.ecommerce: INFO

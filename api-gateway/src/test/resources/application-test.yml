@@ -1,0 +1,12 @@
+# Valores usados SOMENTE nos testes.
+gateway:
+  security:
+    jwt:
+      secret: test-only-secret-not-used-in-any-environment-0123456789
+    users:
+      - username: admin
+        password: admin-test-password
+        roles: [ADMIN, USER]
+      - username: user
+        password: user-test-password
+        roles: [USER]

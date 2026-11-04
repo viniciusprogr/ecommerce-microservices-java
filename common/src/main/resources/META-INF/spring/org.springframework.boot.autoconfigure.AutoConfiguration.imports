@@ -1,0 +1,2 @@
+com.ecommerce.common.config.CommonWebAutoConfiguration
+com.ecommerce.common.config.JwtSecurityAutoConfiguration
