@@ -82,7 +82,9 @@ step "Order flow"
 R=$(request POST /api/orders "$USER_TOKEN" "{\"customerId\":$CUSTOMER_ID,\"items\":[{\"productId\":$PRODUCT_ID,\"quantity\":2}]}")
 expect 201 "$R" "create order"
 ORDER_ID=$(body "$R" | jq -r '.id')
-[[ "$(body "$R" | jq -r '.totalAmount')" == "99.8" ]] || fail "unexpected total: $(body "$R")"
+# Comparacao numerica no jq: o JSON pode trazer 99.80 ou 99.8, e ambos sao o mesmo valor.
+body "$R" | jq -e '.totalAmount == 99.8' > /dev/null || fail "unexpected total: $(body "$R")"
+echo "    ok total calculated by the server (99.80)"
 [[ "$(body "$(request GET "/api/inventory/$PRODUCT_ID" "$USER_TOKEN")" | jq -r '.available')" == "3" ]] || fail "stock not reserved"
 echo "    ok stock reserved (available=3)"
 
