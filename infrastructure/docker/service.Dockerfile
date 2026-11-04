@@ -14,7 +14,10 @@ ARG SERVICE
 WORKDIR /workspace
 COPY . .
 # O cache do ~/.m2 e reaproveitado entre builds (BuildKit), evitando baixar dependencias toda vez.
-RUN --mount=type=cache,target=/root/.m2 \
+# sharing=locked: o compose constroi os 5 servicos em paralelo, e o repositorio local do Maven nao suporta
+# escrita concorrente (causava falhas intermitentes como "FileNotFoundException ... .lastUpdated").
+# Com o lock, um build por vez usa o cache.
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
     mvn -B -q -pl "${SERVICE}" -am -DskipTests package
 
 FROM eclipse-temurin:21-jre-alpine AS runtime
