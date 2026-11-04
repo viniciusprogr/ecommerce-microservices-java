@@ -1,6 +1,7 @@
 package com.ecommerce.customer.repository;
 
 import com.ecommerce.customer.entity.Customer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,6 +25,12 @@ class CustomerRepositoryTest {
 
     @Autowired
     private CustomerRepository repository;
+
+    /** O H2 em memoria e compartilhado entre contextos de teste em cache: limpamos antes de cada teste. */
+    @BeforeEach
+    void clean() {
+        repository.deleteAllInBatch();
+    }
 
     @Test
     void shouldPersistWithAuditFields() {

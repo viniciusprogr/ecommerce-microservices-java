@@ -1,0 +1,11 @@
+# Perfil de testes: H2 em memoria no modo PostgreSQL e um segredo JWT apenas para testes.
+spring:
+  datasource:
+    url: jdbc:h2:mem:product_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+
+security:
+  jwt:
+    secret: test-only-secret-not-used-in-any-environment-0123456789
+    issuer: ecommerce-api-gateway
